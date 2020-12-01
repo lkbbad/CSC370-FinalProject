@@ -10,7 +10,7 @@ import numpy as np
 from queue import PriorityQueue
 import pandas
 
-NUMBER_OF_TRIALS = 5
+NUMBER_OF_TRIALS = 4
 
 '''
 Returns the number of lights that are currently still on in the passed grid state.
@@ -49,9 +49,33 @@ def greedyRec(state, numMoves):
     return (False, float('inf'))
 
 
+def aStar(initial):
+    frontier = []
+    frontier.append(initial)
+    visited_aStar = []
+    
+    while(len(frontier) > 0):
+        frontier.sort()
+        best = frontier.pop(0)
+        numOn = gridSum(best)
+        if numOn == 0:
+            return (True, best.steps)
+        visited_aStar.append(best)
+        
+        possibleMoves = best.possibleMoves()
+        for move in possibleMoves:
+            if (move not in visited_aStar) and (move not in frontier):
+                frontier.append(move)
+                move.steps = best.steps + 1
+    
+    return (False, float('inf'))
+
+
 if __name__ == '__main__':
-    size = int(sys.argv[1])
+    #size = int(sys.argv[1])
+    size = 5
     greedy_nodes = []
+    aStar_nodes = []
     min_nodes = []
 
     for x in range(NUMBER_OF_TRIALS):
@@ -66,14 +90,26 @@ if __name__ == '__main__':
         # print("--------------------")
 
         try:
-            final = greedyRec(initState, 0)
+            final1 = greedyRec(initState, 0)
         except:
-            final = (False, float('inf'))
-        print(final)
-        if (final[0]):
+            final1 = (False, float('inf'))
+            
+        try:
+            final2 = aStar(initState)
+        except:
+            final2 = (False, float('inf'))
+        
+        print(final1)
+        print(final2)
+        
+        if (final1[0]):
             # min_nodes.append(min_moves)
-            greedy_nodes.append(final[1])
+            greedy_nodes.append(final1[1])
+            
+        if (final2[0]):
+            # min_nodes.append(min_moves)
+            aStar_nodes.append(final2[1])
             
 # export trial results to csv
-df = pandas.DataFrame(data={"greedy nodes visited": greedy_nodes})
-df.to_csv("./greedyresults" + str(size)+ "x" + str(size) + ".csv", sep=',', index=False)
+df = pandas.DataFrame(data={"greedy nodes visited": greedy_nodes, "aStar nodes visited": aStar_nodes})
+df.to_csv("./searchresults" + str(size)+ "x" + str(size) + ".csv", sep=',', index=False)

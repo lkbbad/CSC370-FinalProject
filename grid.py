@@ -19,6 +19,7 @@ class LightsOutGrid():
             for _ in range(size):
                 self.row.append(0)
             self.state.append(self.row)
+        self.steps = 0
 
     def __cmp__(self, other):
         value = np.sum(self.state)
@@ -121,6 +122,13 @@ class LightsOutGrid():
                         updated_grid.state[row][col+1] = 1
                 nodes.append(updated_grid)
         return nodes
+
+    '''
+    Returns the heuristic value of a board
+    '''
+
+    def heuristic(self):
+        return np.sum(self.state) / 5
 
 
 '''
