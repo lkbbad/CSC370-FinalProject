@@ -48,7 +48,11 @@ def greedyRec(state, numMoves):
                 return (True, ans[1])
     return (False, float('inf'))
 
-
+'''
+Implementation of A* heuristic search.
+The heuristic value is the number of lights remaining on divided by 5, since 5 is the max number of lights that can be turned off with one button
+Frontier is sorted from lowest to highest by the number of lights remaining (not divided by 5 for the sake of code simplicity)
+'''
 def aStar(initial):
     frontier = []
     frontier.append(initial)
