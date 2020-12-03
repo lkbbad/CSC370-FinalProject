@@ -9,8 +9,10 @@ import copy
 import numpy as np
 from queue import PriorityQueue
 import pandas
+from mcts import mcts
+mcts = mcts(timeLimit=1000)
 
-NUMBER_OF_TRIALS = 4
+NUMBER_OF_TRIALS = 5
 
 '''
 Returns the number of lights that are currently still on in the passed grid state.
@@ -74,13 +76,33 @@ def aStar(initial):
     
     return (False, float('inf'))
 
+'''
+The MCTS package provides a simple way of using Monte Carlo Tree Search in any perfect information domain.
+'''
+def mctree(state):
+    curState = state
+    numMoves = 0
+    while(True):
+        try:
+            print("start")
+            action = mcts.search(initialState=curState)
+            print(action)
+            curState = curState.takeAction(action)
+            print(curState)
+            numMoves += 1
+            print(numMoves)
+        except:
+            break
+    return numMoves
+
+
 
 if __name__ == '__main__':
     #size = int(sys.argv[1])
-    size = 5
+    size = 2
     greedy_nodes = []
     aStar_nodes = []
-    min_nodes = []
+    mcts_nodes = []
 
     for x in range(NUMBER_OF_TRIALS):
         visited = []
@@ -89,31 +111,38 @@ if __name__ == '__main__':
         # print("--------------------")
         initState = grid.initGrid(start)
         # print('Starting state is: \n')
-        # print(initState)
-        new_state = initState
+        print(initState)
         # print("--------------------")
 
         try:
             final1 = greedyRec(initState, 0)
         except:
             final1 = (False, float('inf'))
-            
+        
+        '''
         try:
             final2 = aStar(initState)
         except:
             final2 = (False, float('inf'))
+        '''
         
         print(final1)
-        print(final2)
+        #print(final2)
+        final3 = mctree(initState)
+        print(final3)
+        print("\n")
         
         if (final1[0]):
             # min_nodes.append(min_moves)
             greedy_nodes.append(final1[1])
-            
+        '''  
         if (final2[0]):
             # min_nodes.append(min_moves)
             aStar_nodes.append(final2[1])
-            
+        '''
+        mcts_nodes.append(final3)
 # export trial results to csv
-df = pandas.DataFrame(data={"greedy nodes visited": greedy_nodes, "aStar nodes visited": aStar_nodes})
-df.to_csv("./searchresults" + str(size)+ "x" + str(size) + ".csv", sep=',', index=False)
+#df = pandas.DataFrame(data={"greedy nodes visited": greedy_nodes, "aStar nodes visited": aStar_nodes})
+#df.to_csv("./searchresults" + str(size)+ "x" + str(size) + ".csv", sep=',', index=False)
+df = pandas.DataFrame(data={"greedy nodes visited": greedy_nodes, "mcts nodes visited": mcts_nodes})
+df.to_csv("./mctsresults" + str(size)+ "x" + str(size) + ".csv", sep=',', index=False)
