@@ -108,7 +108,6 @@ def mctree(mcts, state):
 
         numMoves += 1
 
-    print(numMoves)
     return numMoves
 
 '''
@@ -119,7 +118,7 @@ Matplotlib setup for result charts.
 def make_bar_graph(greedy, aStar, mcts, title, ylabel, xlabel):
     import matplotlib.pyplot as plt
 
-    labels = ['2', '3', '4', '5']  # , '6', '7']  # '8', '9', '10']
+    labels = ['2', '3', '4', '5'] 
 
     x = np.arange(len(labels))  # the label locations
     width = 0.2  # the width of the bars
@@ -143,7 +142,7 @@ def make_bar_graph(greedy, aStar, mcts, title, ylabel, xlabel):
 def make_bar_graph_cs(mcts, c):
     import matplotlib.pyplot as plt
 
-    labels = c  # , '4', '5', '6', '7', '8', '9', '10']
+    labels = c 
 
     x = np.arange(len(labels))  # the label locations
     width = 0.35  # the width of the bars
@@ -189,11 +188,9 @@ if __name__ == '__main__':
             final3 = mctree(mcts_obj, initState)
 
             if (final1[0]):
-                # min_nodes.append(min_moves)
                 greedy_nodes.append(final1[1])
 
             if (final2[0]):
-                # min_nodes.append(min_moves)
                 aStar_nodes.append(final2[1])
 
             mcts_nodes.append(final3)
