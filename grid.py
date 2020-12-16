@@ -10,8 +10,11 @@ import copy
 import numpy as np
 from copy import deepcopy
 
-RANDOMIZATION_NUMBER = 15
+RANDOMIZATION_NUMBER = 10
 
+'''
+Lights Out grid class
+'''
 class LightsOutGrid():
     def __init__(self, size):
         self.state = []
@@ -48,6 +51,7 @@ class LightsOutGrid():
     '''
     Class function that returns a representation of the current state of the grid.
     '''
+
     def __repr__(self):
         res = ''
         for row in range(self.size):
@@ -58,6 +62,7 @@ class LightsOutGrid():
     '''
     Returns grid self with the light (x, y) toggled, and all neighbors toggled as well.
     '''
+
     def toggle(self, row, col):
         if self.state[row][col] == 1:
             self.state[row][col] = 0
@@ -89,6 +94,7 @@ class LightsOutGrid():
     '''
     Returns list of all possible next moves from current state.
     '''
+
     def possibleMoves(self):
         nodes = []
         for row in range(self.size):
@@ -121,52 +127,54 @@ class LightsOutGrid():
                         updated_grid.state[row][col+1] = 1
                 nodes.append(updated_grid)
         return nodes
-    
+
     '''
     Returns an iterable of all actions which can be taken from this state (for MCTS)
     '''
+
     def getPossibleActions(self):
         possibleActions = []
         for i in range(len(self.state)):
             for j in range(len(self.state[i])):
                 possibleActions.append(Action(x=i, y=j))
         return possibleActions
-    
+
     '''
     Returns the state which results from taking an action (for MCTS)
     '''
+
     def takeAction(self, action):
         newState = deepcopy(self)
         newState.toggle(action.x, action.y)
         return newState
-    
+
     '''
     Returns whether this state is a terminal state (for MCTS)
     '''
+
     def isTerminal(self):
         if(np.sum(self.state) == 0):
             return True
         else:
             return False
-    
+
     '''
     Returns the reward for this state. Only needed for terminal states (for MCTS)
     '''
+
     def getReward(self):
-        #return np.sum(self.state)
-        if(self.isTerminal()):
-            return True
-        else:
-            return False
-    
+        return self.size*self.size - np.sum(self.state)
+
     '''
     Returns the heuristic value of a board
     '''
+
     def heuristic(self):
         return np.sum(self.state) / 5
 
-
-
+'''
+MCTS action class
+'''
 class Action():
     def __init__(self, x, y):
         self.x = x
@@ -185,33 +193,16 @@ class Action():
         return hash((self.x, self.y))
 
 
-
 '''
 Function that uses a randomized number of iterations to return the initial
 state of the grid by turning on lights starting from a finished state.
 '''
+
 def initGrid(grid):
     iterations = random.randint(4, RANDOMIZATION_NUMBER)
-    # print("Minimum Number of Moves: ", iterations)
     for _ in range(iterations):
         rand_row = random.randint(0, grid.size-1)
         rand_col = random.randint(0, grid.size-1)
         grid = grid.toggle(rand_row, rand_col)
     return grid
-
-
-
-if __name__ == '__main__':
-    grid = LightsOutGrid(5)
-#    print(grid)
-#    print(toggle(grid,3,4))
-#    print(toggle(grid,4,4))
-#    print(toggle(grid,3,2))
-#    print(toggle(grid,4,3))
-    initState = initGrid(grid)
-    print(initState)
-    print(initState.possibleMoves())
-
-
-
 
